@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="SonySDK-2.30">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/sony/libs/api/SonySDK/2.30/SonySDK-2.30.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

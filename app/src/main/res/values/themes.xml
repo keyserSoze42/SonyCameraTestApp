@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorControlNormal</item>
+        <item name="colorControlActivated">@color/colorControlActivated</item>
+        <item name="colorSwitchThumbNormal">@color/colorSwitchThumbNormal</item>
+    </style>
+
+    <array name="pv_circular_colors">
+        <item>@style/LightColorCircularProgressView</item>
+        <item>@style/DarkColorCircularProgressView</item>
+    </array>
+
+    <array name="pv_circular_in_colors">
+        <item>@style/LightInColorCircularProgressView</item>
+        <item>@style/DarkInColorCircularProgressView</item>
+    </array>
+
+</resources>
