@@ -11,13 +11,12 @@ import android.widget.TextView;
 
 //SonySDK imports
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
 import sony.sdk.cameraremote.ServerDevice;
 import sony.sdk.cameraremote.SimpleSsdpClient;
 import sony.sdk.cameraremote.SimpleStreamSurfaceView;
+
+import com.keysersoze.sonyandroidlib.CameraConnectionController;
+import com.keysersoze.sonyandroidlib.IsSupportedUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -73,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(StreamErrorReason reason) {
-                                //stopLiveview();
+                                cameraConnectionController.stopLiveview();
                             }
                         });
                 }
