@@ -12,10 +12,12 @@ import android.widget.TextView;
 //SonySDK imports
 
 import sony.sdk.cameraremote.ServerDevice;
+import sony.sdk.cameraremote.SimpleRemoteApi;
 import sony.sdk.cameraremote.SimpleSsdpClient;
 import sony.sdk.cameraremote.SimpleStreamSurfaceView;
 
 import com.keysersoze.sonyandroidlib.CameraConnectionController;
+import com.keysersoze.sonyandroidlib.CameraSettingsController;
 import com.keysersoze.sonyandroidlib.IsSupportedUtil;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     private SwipeRefreshLayout swipeContainer;
     private SimpleStreamSurfaceView liveViewFinder;
+    private static SimpleRemoteApi mRemoteApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
     SimpleSsdpClient.SearchResultHandler searchResultHandler = new SimpleSsdpClient.SearchResultHandler() {
         @Override
         public void onDeviceFound(ServerDevice serverDevice) {
+            mRemoteApi = SimpleRemoteApi.getInstance();
+            mRemoteApi.init(serverDevice);
             cameraConnectionController.onDeviceFound(serverDevice);
             final String deviceAddress = serverDevice.getDDUrl();
 
@@ -105,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
             };
 
             runOnUiThread(updateUITask);
+            CameraSettingsController cameraSettingsController = new CameraSettingsController();
         }
 
         @Override
