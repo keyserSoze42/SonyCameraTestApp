@@ -14,7 +14,8 @@ import android.widget.TextView;
 import sony.sdk.cameraremote.ServerDevice;
 import sony.sdk.cameraremote.SimpleRemoteApi;
 import sony.sdk.cameraremote.SimpleSsdpClient;
-import sony.sdk.cameraremote.SimpleStreamSurfaceView;
+import com.keysersoze.sonyandroidlib.SimpleStreamSurfaceView;
+import com.keysersoze.sonyandroidlib.ViewFinderLayout;
 
 import com.keysersoze.sonyandroidlib.CameraConnectionController;
 import com.keysersoze.sonyandroidlib.CameraSettingsController;
@@ -62,33 +63,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        CameraConnectionController.CameraConnectionHandler cameraConnectionHandler = new CameraConnectionController.CameraConnectionHandler() {
-            @Override
-            public void onCameraConnected() {
-            // Liveview start
-                if (IsSupportedUtil.isCameraApiAvailable("startLiveview", cameraConnectionController.getApiSet())) {
-                    Log.d(TAG, "openConnection(): LiveviewSurface.start()");
-                    String liveViewUrl = cameraConnectionController.startLiveview();
 
-                    liveViewFinder.start(liveViewUrl, //
-                        new SimpleStreamSurfaceView.StreamErrorListener() {
-
-                            @Override
-                            public void onError(StreamErrorReason reason) {
-                                cameraConnectionController.stopLiveview();
-                            }
-                        });
-                }
-            }
-
-            @Override
-            public void onCameraReady() {
-
-            }
-        };
-
-        //Camera Connection
-        cameraConnectionController = new CameraConnectionController(this, cameraConnectionHandler);
 
         liveViewFinder = (SimpleStreamSurfaceView) findViewById(R.id.liveViewFinder);
     }
@@ -158,6 +133,49 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        //Camera Connection
+
+        CameraConnectionController.CameraConnectionHandler cameraConnectionHandler = new CameraConnectionController.CameraConnectionHandler() {
+            @Override
+            public void onCameraConnected() {
+                // Liveview start
+                if (IsSupportedUtil.isCameraApiAvailable("startLiveview", cameraConnectionController.getApiSet())) {
+                    Log.d(TAG, "openConnection(): LiveviewSurface.start()");
+                    String liveViewUrl = cameraConnectionController.startLiveview();
+
+                    liveViewFinder.start(liveViewUrl, //
+                            new ViewFinderLayout.StreamErrorListener() {
+
+                                @Override
+                                public void onError(StreamErrorReason reason) {
+                                    cameraConnectionController.stopLiveview();
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCameraReady() {
+
+            }
+        };
+        cameraConnectionController = new CameraConnectionController(this, cameraConnectionHandler);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        if (liveViewFinder != null) {
+            liveViewFinder.stop();
+            liveViewFinder = null;
+            cameraConnectionController.stopLiveview();
+            cameraConnectionController = null;
+        }
     }
 
 }

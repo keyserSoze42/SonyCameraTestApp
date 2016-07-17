@@ -45,15 +45,29 @@
                             android:layout_gravity="center_horizontal|top" />
 
                         <android.support.v7.widget.CardView
+                            android:id="@+id/liveViewCard"
                             android:layout_width="300dp"
                             android:layout_height="200dp"
                             android:layout_below="@id/device_status">
-                            <sony.sdk.cameraremote.SimpleStreamSurfaceView
+                            <com.keysersoze.sonyandroidlib.SimpleStreamSurfaceView
                                 android:id="@+id/liveViewFinder"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_margin="10dp"/>
                         </android.support.v7.widget.CardView>
+
+                        <com.keysersoze.sonyandroidlib.widgets.ZoomSlider
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_toRightOf="@id/liveViewCard"/>
+
+                        <Button
+                            android:id="@+id/disconnect"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Disconnect"
+                            android:layout_below="@id/liveViewCard"/>
+
                     </RelativeLayout>
                 </ScrollView>
             </FrameLayout>
