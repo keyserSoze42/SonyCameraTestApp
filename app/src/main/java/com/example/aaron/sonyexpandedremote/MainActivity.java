@@ -7,10 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 //SonySDK imports
 
+import sony.sdk.cameraremote.ApiThreadBuilder;
 import sony.sdk.cameraremote.ServerDevice;
 import sony.sdk.cameraremote.SimpleRemoteApi;
 import sony.sdk.cameraremote.SimpleSsdpClient;
@@ -18,8 +21,9 @@ import com.keysersoze.sonyandroidlib.SimpleStreamSurfaceView;
 import com.keysersoze.sonyandroidlib.ViewFinderLayout;
 
 import com.keysersoze.sonyandroidlib.CameraConnectionController;
-import com.keysersoze.sonyandroidlib.CameraSettingsController;
 import com.keysersoze.sonyandroidlib.IsSupportedUtil;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,7 +43,10 @@ public class MainActivity extends AppCompatActivity {
 
     private SwipeRefreshLayout swipeContainer;
     private SimpleStreamSurfaceView liveViewFinder;
-    private static SimpleRemoteApi mRemoteApi;
+    private static ApiThreadBuilder mRemoteApi;
+    private static SimpleRemoteApi mRemoteApiOld;
+
+    Button shutter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
         ssdpClient = new SimpleSsdpClient();
         deviceStatus = (TextView) findViewById(R.id.device_status);
+        shutter = (Button) findViewById(R.id.takePicture);
         //searchProgress = (ProgressView) findViewById(R.id.searchProgress);
 
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.container);
@@ -63,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
         liveViewFinder = (SimpleStreamSurfaceView) findViewById(R.id.liveViewFinder);
     }
 
@@ -72,7 +78,13 @@ public class MainActivity extends AppCompatActivity {
     SimpleSsdpClient.SearchResultHandler searchResultHandler = new SimpleSsdpClient.SearchResultHandler() {
         @Override
         public void onDeviceFound(ServerDevice serverDevice) {
-            mRemoteApi = SimpleRemoteApi.getInstance();
+            try {
+                mRemoteApi = ApiThreadBuilder.getInstance();
+                mRemoteApiOld = SimpleRemoteApi.getInstance();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mRemoteApiOld.init(serverDevice);
             mRemoteApi.init(serverDevice);
             cameraConnectionController.onDeviceFound(serverDevice);
             final String deviceAddress = serverDevice.getDDUrl();
@@ -85,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
             };
 
             runOnUiThread(updateUITask);
-            CameraSettingsController cameraSettingsController = new CameraSettingsController();
         }
 
         @Override
@@ -164,7 +175,22 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };
-        cameraConnectionController = new CameraConnectionController(this, cameraConnectionHandler);
+        try {
+            cameraConnectionController = new CameraConnectionController(this, cameraConnectionHandler);    
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        shutter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    mRemoteApi.actTakePicture();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
