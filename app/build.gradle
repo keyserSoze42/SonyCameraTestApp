@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    buildToolsVersion "25.0.0"
 
     defaultConfig {
         applicationId "com.example.aaron.sonyexpandedremote"
@@ -20,8 +20,10 @@ android {
 }
 
 dependencies {
-    compile group:'sony.libs.api', name: 'SonySDK', version: '2.30-2'
-    compile group:'sony.libs.api', name: 'sonyandroidlib', version: '2.30-2'
+    compile group:'sony.libs.api', name: 'SonySDK', version: '2.30'
+    compile group:'sony.libs.api', name: 'sonyandroidlib', version: '2.30'
+    compile group:'sony.libs.design', name: 'sonydesignlib', version: '2.30'
     compile 'com.github.rey5137:material:1.2.4'
     compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'bracket.libs.api:bracketcameraAPI:1.0.0'
 }

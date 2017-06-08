@@ -13,14 +13,13 @@ import android.widget.TextView;
 
 //SonySDK imports
 
-import sony.sdk.cameraremote.ApiThreadBuilder;
 import sony.sdk.cameraremote.ServerDevice;
 import sony.sdk.cameraremote.SimpleRemoteApi;
 import sony.sdk.cameraremote.SimpleSsdpClient;
-import com.keysersoze.sonyandroidlib.SimpleStreamSurfaceView;
-import com.keysersoze.sonyandroidlib.ViewFinderLayout;
+import com.example.sonydesignlib.SimpleStreamSurfaceView;
+import com.example.sonydesignlib.ViewFinderLayout;
 
-import com.keysersoze.sonyandroidlib.CameraConnectionController;
+import com.keysersoze.sonyandroidlib.SonyCameraController;
 import com.keysersoze.sonyandroidlib.IsSupportedUtil;
 
 import java.io.IOException;
@@ -38,13 +37,12 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "SonyExpandedRemote";
 
-    private CameraConnectionController cameraConnectionController;
+    private SonyCameraController cameraConnectionController;
     private SimpleSsdpClient ssdpClient;
 
     private SwipeRefreshLayout swipeContainer;
     private SimpleStreamSurfaceView liveViewFinder;
-    private static ApiThreadBuilder mRemoteApi;
-    private static SimpleRemoteApi mRemoteApiOld;
+    private static SimpleRemoteApi mRemoteApi;
 
     Button shutter;
 
@@ -78,15 +76,9 @@ public class MainActivity extends AppCompatActivity {
     SimpleSsdpClient.SearchResultHandler searchResultHandler = new SimpleSsdpClient.SearchResultHandler() {
         @Override
         public void onDeviceFound(ServerDevice serverDevice) {
-            try {
-                mRemoteApi = ApiThreadBuilder.getInstance();
-                mRemoteApiOld = SimpleRemoteApi.getInstance();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mRemoteApiOld.init(serverDevice);
+            mRemoteApi = SimpleRemoteApi.getInstance();
             mRemoteApi.init(serverDevice);
-            cameraConnectionController.onDeviceFound(serverDevice);
+            cameraConnectionController.cameraDeviceFound(serverDevice);
             final String deviceAddress = serverDevice.getDDUrl();
 
             Runnable updateUITask = new Runnable() {
@@ -109,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
             runOnUiThread(updateUITask);
-            CameraConnectionController.openConnection();
+            cameraConnectionController.openConnection();
         }
 
         @Override
@@ -151,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         //Camera Connection
 
-        CameraConnectionController.CameraConnectionHandler cameraConnectionHandler = new CameraConnectionController.CameraConnectionHandler() {
+        SonyCameraController.CameraConnectionHandler cameraConnectionHandler = new SonyCameraController.CameraConnectionHandler() {
             @Override
             public void onCameraConnected() {
                 // Liveview start
@@ -175,12 +167,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };
-        try {
-            cameraConnectionController = new CameraConnectionController(this, cameraConnectionHandler);    
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
+        cameraConnectionController = new SonyCameraController(this, cameraConnectionHandler);
+
         shutter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
